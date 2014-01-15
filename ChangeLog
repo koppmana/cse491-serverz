@@ -1,3 +1,7 @@
 2014-01-07  Titus Brown  <t@Titus-MacBook-Air-2.local>
 
  * Initialized repository, created server.py and README.
+
+2014-01-14 Justin Rucinski <rucins11@msu.edu>
+
+ * Added http response and 'Hello, world' display to web server.
