@@ -23,6 +23,6 @@ while True:
     c.send('Date: ' + time.asctime(time.gmtime()) + '\n')
     c.send('Content-Type: text/html\n\n')
     c.send('<html><body>')
-    c.send("<h1>Hello, world</h1> this is JRucinski's Web server.")
+    c.send("<h1>Hello, world</h1> this is rucin11's Web server.")
     c.send('</body></html>')
     c.close()
