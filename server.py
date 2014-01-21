@@ -52,6 +52,7 @@ def main():
         server.wait_for_connect()
         server.send_response(response_type + " " + response_line)
         server.send_response(cont_type)
+        server.send_response("\r\n")
         server.send_response(response_body)
         server.close_conn()
     
