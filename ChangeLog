@@ -6,3 +6,10 @@
 
  * Created server class 
  * Server responds to requests 
+
+2014-01-23 Allen Koppman
+
+ * Server handling basic post and get requests
+ * Server handles different path requests
+ * Added more test functions
+ 
