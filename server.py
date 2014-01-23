@@ -59,19 +59,76 @@ def main():
         handle_connection(conn)
 
 def handle_connection(conn):
-    cont_type = "Content-Type: text/html\r\n"
-    response_type = "HTTP/1.0"
-    response_line = "200 OK\r\n"
-    response_body = "<html><body><h1>Hello, world!</h1> \
-                    <p>This is koppmana's web server!</p> \
-                    </body></html>"
+    req = conn.recv(1000)
+    req_type = req.split()[0]
 
-    conn.send(response_type + " " + response_line)
-    conn.send(cont_type)
-    conn.send("\r\n")
-    conn.send(response_body)
+    if req_type == "GET":
+        url = req.split()[1]
+
+        if url == "/":
+            handle_connection_default(conn)
+        elif url == "/content":
+            handle_connection_content(conn)
+        elif url == "/image":
+            handle_connection_image(conn)
+        elif url == "/file":
+            handle_connection_file(conn)
+        else:
+            handle_connection_failed(conn)
+    elif req_type == "POST":
+        handle_connection_post(conn)
+    else:
+        print "Invalid request, yo."
+
+def handle_connection_default(conn):
+    conn.send('HTTP/1.0 200 OK\r\n')
+    conn.send('Content-type: text/html\r\n')
+    conn.send('\r\n')
+    conn.send('<h1>Hello, world.</h1>')
+    conn.send('<a href="/content">Content</a><br>')
+    conn.send('<a href="/file">File</a><br>')
+    conn.send('<a href="/image">Image</a><br>')
+    conn.send('This is koppmana\'s Web server.')
     conn.close()
 
+def handle_connection_content(conn):
+    conn.send('HTTP/1.0 200 OK\r\n')
+    conn.send('Content-type: text/html\r\n')
+    conn.send('\r\n')
+    conn.send('<h1>Fulfilling content request</h1>')
+    conn.send('This is koppmana\'s Web server.')
+    conn.close()
+
+def handle_connection_file(conn):
+    conn.send('HTTP/1.0 200 OK\r\n')
+    conn.send('Content-type: text/html\r\n')
+    conn.send('\r\n')
+    conn.send('<h1>Fullfilling file request</h1>')
+    conn.send('This is koppmana\'s Web server.')
+    conn.close()
+
+def handle_connection_image(conn):
+    conn.send('HTTP/1.0 200 OK\r\n')
+    conn.send('Content-type: text/html\r\n')
+    conn.send('\r\n')
+    conn.send('<h1>Fullfilling image request</h1>')
+    conn.send('This is koppmana\'s Web server.')
+    conn.close()
+
+def handle_connection_fail(conn):
+    conn.send('HTTP/1.0 400 BAD\r\n')
+    conn.send('Content-type: text/html\r\n')
+    conn.send('\r\n')
+    conn.send('<h1>Bad request</h1>')
+    conn.send('This is koppmana\'s Web server.')
+    conn.close()
+
+def handle_post_connection(conn):
+    conn.send('HTTP/1.0 200 OK\r\n')
+    conn.send('Content-type: text/html\r\n')
+    conn.send('\r\n')
+    conn.send('Hello, World.')
+    conn.close()
 
 if __name__ == '__main__':
     main()
