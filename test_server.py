@@ -90,7 +90,7 @@ def test_handle_connection_image():
 
     assert conn.sent == expected_return, 'Got: %s' % (repr(conn.sent),)
 
-def test_handle_connection_fail():
+def test_handle_connection_failed():
     conn = FakeConnection("GET / HTTP/1.0\r\n\r\n")
     expected_return = 'HTTP/1.0 400 BAD\r\n' + \
                       'Content-type: text/html\r\n' + \
@@ -98,7 +98,7 @@ def test_handle_connection_fail():
                       '<h1>You made a bad request</h1>' + \
                       'This is koppmana\'s Web server.'
 
-    server.handle_connection_fail(conn)
+    server.handle_connection_failed(conn)
 
     assert conn.sent == expected_return, 'Got: %s' % (repr(conn.sent),)
 

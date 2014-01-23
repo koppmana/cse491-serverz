@@ -115,7 +115,7 @@ def handle_connection_image(conn):
     conn.send('This is koppmana\'s Web server.')
     conn.close()
 
-def handle_connection_fail(conn):
+def handle_connection_failed(conn):
     conn.send('HTTP/1.0 400 BAD\r\n')
     conn.send('Content-type: text/html\r\n')
     conn.send('\r\n')
