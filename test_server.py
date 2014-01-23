@@ -28,7 +28,7 @@ class FakeConnection(object):
 # Test a basic GET call.
 
 def test_handle_connection():
-    conn = FakeConnection("GET / HTTP/1.0\r\n\r\n")
+    conn = FakeConnection("GET / HTTP/1.0\r\n")
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n' + \
                       '\r\n' + \
@@ -40,15 +40,15 @@ def test_handle_connection():
     assert conn.sent == expected_return, 'Got: %s' % (repr(conn.sent),)
 
 def test_handle_connection_default():
-    conn = FakeConnection("GET / HTTP/1.0\r\n\r\n")
+    conn = FakeConnection("GET / HTTP/1.0\r\n")
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n' + \
                       '\r\n' + \
                       '<h1>Hello, world.</h1>' + \
+                      'This is koppmana\'s Web server.<br>' \
                       '<a href="/content">Content</a><br>' + \
                       '<a href="/file">File</a><br>' + \
                       '<a href="/image">Image</a><br>' + \
-                      'This is koppmana\'s Web server.'
 
     server.handle_connection_default(conn)
 
@@ -59,8 +59,7 @@ def test_handle_connection_content():
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n' + \
                       '\r\n' + \
-                      '<h1>Here\'s Some Content</h1>' + \
-                      'This is koppmana\'s Web server.'
+                      '<h1>Fullfilling content request</h1>' + \
 
     server.handle_connection_content(conn)
 
@@ -71,8 +70,7 @@ def test_handle_connection_file():
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n' + \
                       '\r\n' + \
-                      '<h1>Here\'s a File</h1>' + \
-                      'This is koppmana\'s Web server.'
+                      '<h1>Fullfilling file request</h1>' + \
 
     server.handle_connection_file(conn)
 
@@ -83,8 +81,7 @@ def test_handle_connection_image():
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n' + \
                       '\r\n' + \
-                      '<h1>Here\'s an Image</h1>' + \
-                      'This is koppmana\'s Web server.'
+                      '<h1>Fullfilling image request</h1>' + \
 
     server.handle_connection_image(conn)
 
@@ -95,20 +92,19 @@ def test_handle_connection_failed():
     expected_return = 'HTTP/1.0 400 BAD\r\n' + \
                       'Content-type: text/html\r\n' + \
                       '\r\n' + \
-                      '<h1>You made a bad request</h1>' + \
-                      'This is koppmana\'s Web server.'
+                      '<h1>Bad request</h1>' + \
 
     server.handle_connection_failed(conn)
 
     assert conn.sent == expected_return, 'Got: %s' % (repr(conn.sent),)
 
-def test_handle_post_connection():
+def test_handle_connection_post():
     conn = FakeConnection("POST / HTTP/1.0\r\n\r\n")
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n' + \
                       '\r\n' + \
                       'Hello, World'
 
-    server.handle_post_connection(conn)
+    server.handle_connection_post(conn)
 
     assert conn.sent == expected_return, 'Got: %s' % (repr(conn.sent),)
