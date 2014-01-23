@@ -102,13 +102,13 @@ def handle_connection_file(conn):
     conn.send('HTTP/1.0 200 OK\r\n')
     conn.send('Content-type: text/html\r\n')
     conn.send('\r\n')
-    conn.send('<h1>Fullfilling file request</h1>')
+    conn.send('<h1>Fulfilling file request</h1>')
 
 def handle_connection_image(conn):
     conn.send('HTTP/1.0 200 OK\r\n')
     conn.send('Content-type: text/html\r\n')
     conn.send('\r\n')
-    conn.send('<h1>Fullfilling image request</h1>')
+    conn.send('<h1>Fulfilling image request</h1>')
 
 def handle_connection_failed(conn):
     conn.send('HTTP/1.0 400 BAD\r\n')
