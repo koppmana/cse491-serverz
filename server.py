@@ -66,7 +66,7 @@ def handle_connection(conn):
         url = req.split()[1]
 
         if url == "/":
-            handle_connection(conn)
+            handle_connection_default(conn)
         elif url == "/content":
             handle_connection_content(conn)
         elif url == "/image":
@@ -77,12 +77,10 @@ def handle_connection(conn):
             handle_connection_failed(conn)
     elif req_type == "POST":
         handle_connection_post(conn)
-    else:
-        print "Invalid request, yo."
 
     conn.close()
 
-def handle_connection(conn):
+def handle_connection_default(conn):
     conn.send('HTTP/1.0 200 OK\r\n')
     conn.send('Content-type: text/html\r\n')
     conn.send('\r\n')
