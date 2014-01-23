@@ -85,10 +85,10 @@ def handle_connection_default(conn):
     conn.send('Content-type: text/html\r\n')
     conn.send('\r\n')
     conn.send('<h1>Hello, world.</h1>')
+    conn.send('This is koppmana\'s Web server.')
     conn.send('<a href="/content">Content</a><br>')
     conn.send('<a href="/file">File</a><br>')
     conn.send('<a href="/image">Image</a><br>')
-    conn.send('This is koppmana\'s Web server.')
     conn.close()
 
 def handle_connection_content(conn):
