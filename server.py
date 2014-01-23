@@ -66,7 +66,7 @@ def handle_connection(conn):
         url = req.split()[1]
 
         if url == "/":
-            handle_connection_default(conn)
+            handle_connection(conn)
         elif url == "/content":
             handle_connection_content(conn)
         elif url == "/image":
@@ -82,7 +82,7 @@ def handle_connection(conn):
 
     conn.close()
 
-def handle_connection_default(conn):
+def handle_connection(conn):
     conn.send('HTTP/1.0 200 OK\r\n')
     conn.send('Content-type: text/html\r\n')
     conn.send('\r\n')
