@@ -71,7 +71,6 @@ def handle_submit(conn, url_info, req_info, req_type):
         query = req_info.splitlines()[-1]
 
     data = urlparse.parse_qs(query)
-    print data
     f_name = data['firstName'][0]
     l_name = data['lastName'][0]
     send_data = 'HTTP/1.0 200 OK\r\n' + \

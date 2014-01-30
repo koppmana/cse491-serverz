@@ -117,18 +117,6 @@ def test_handle_form():
     server.handle_connection(form_conn)
 
     assert form_conn.sent == form_return, 'Got: %s' % (repr(form_conn.sent),)
-    
-
-def test_post_request():
-    post_conn = FakeConnection("POST /image HTTP/1.0\r\n\r\n")
-
-    post_return = 'HTTP/1.0 200 OK\r\n' + \
-             'Content-type: text/html\r\n\r\n' + \
-             '<h2>hello world</h2>'
-
-    server.handle_connection(post_conn)
-
-    assert post_conn.sent == post_return, 'Got: %s' % (repr(post_conn.sent),)
 
 def test_handle_get_submit():
     submit_conn = FakeConnection("GET /submit?firstName=Allen&lastName=Koppman HTTP/1.0\r\n\r\n")
