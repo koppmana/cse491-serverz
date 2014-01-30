@@ -28,7 +28,7 @@ def handle_connection(conn):
     req_info = conn.recv(1000)
     req = req_info.split(" ")
     url_parse = urlparse.urlparse(req[1])
-    req_type = req_split[0]
+    req_type = req[0]
     path = url_parse.path
 
     if req_type == "GET":
@@ -70,7 +70,8 @@ def handle_submit(conn, url_info, req_info, req_type):
     elif req_type == "POST":
         query = req_info.splitlines()[-1]
 
-    data = parse_qs(query)
+    data = urlparse.parse_qs(query)
+    print data
     f_name = data['firstName'][0]
     l_name = data['lastName'][0]
     send_data = 'HTTP/1.0 200 OK\r\n' + \
@@ -78,7 +79,7 @@ def handle_submit(conn, url_info, req_info, req_type):
              '<p>' + \
              'Hello Mr. %s %s.' % (f_name, l_name) + \
              '</p>'
-    conn.send(toSend)
+    conn.send(send_data)
 
 def handle_form(conn, urlInfo):
     forms = 'HTTP/1.0 200 OK\r\n' + \
