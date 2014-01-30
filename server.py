@@ -2,43 +2,9 @@
 import random
 import socket
 import time
+import urlparse
 
-
-##class Cse491server(object):
-##
-##    # initiliaze server then listen for client
-##    def __init__(self):
-##        self.sock = socket.socket()         # Create a socket object
-##        self.host = socket.getfqdn() # Get local machine name
-##        self.port = random.randint(8000, 9999)
-##        self.sock.bind((self.host, self.port))        # Bind to the port
-##
-##        print 'Starting server on', self.host, self.port
-##        print 'The Web server URL for this would be http://%s:%d/' % (self.host, self.port)
-##
-##        self.sock.listen(5)     # Now wait for client connection.
-##
-##
-##    def wait_for_connect(self):
-##        # Establish connection with client.    
-##        self.conn, (self.client_host, self.client_port) = self.sock.accept()
-##        
-##        print 'Got connection from', self.client_host, self.client_port
-##
-##
-##    # send response to client
-##    def send_response(self, msg):
-##        self.conn.send(msg)
-##
-##                
-##    # close socket connection
-##    def close_conn(self):
-##        self.conn.close()
-##        print "Disconnected from " + self.client_host
-
-        
 def main():
-    #server = Cse491server()
     sock = socket.socket()         # Create a socket object
     host = socket.getfqdn() # Get local machine name
     port = random.randint(8000, 9999)
@@ -59,24 +25,32 @@ def main():
         handle_connection(conn)
 
 def handle_connection(conn):
-    req = conn.recv(1000)
-    req_type = req.split()[0]
+    req_info = conn.recv(1000)
+    req = req_info.split(" ")
+    url_parse = urlparse.urlparse(req[1])
+    req_type = req_split[0]
+    path = url_parse.path
 
     if req_type == "GET":
-        url = req.split()[1]
-
-        if url == "/":
+        if path == "/":
             handle_connection_default(conn)
-        elif url == "/content":
+        elif path == "/content":
             handle_connection_content(conn)
-        elif url == "/image":
+        elif path == "/image":
             handle_connection_image(conn)
-        elif url == "/file":
+        elif path == "/file":
             handle_connection_file(conn)
+        elif path == "/form":
+            handle_form(conn, url_parse)
+        elif path == "/submit": 
+            handle_submit(conn, url_parse, req_info, req_type)
         else:
             handle_connection_failed(conn)
     elif req_type == "POST":
-        handle_connection_post(conn)
+        if path == "/":
+            handle_connection_post(conn)
+        elif path == "/submit":
+            handle_submit(conn, url_parse, req_info, req_type)
 
     conn.close()
 
@@ -89,6 +63,38 @@ def handle_connection_default(conn):
     conn.send('<a href="/content">Content</a><br>')
     conn.send('<a href="/file">File</a><br>')
     conn.send('<a href="/image">Image</a><br>')
+
+def handle_submit(conn, url_info, req_info, req_type):
+    if req_type == "GET":
+        query = url_info.query
+    elif req_type == "POST":
+        query = req_info.splitlines()[-1]
+
+    data = parse_qs(query)
+    f_name = data['firstName'][0]
+    l_name = data['lastName'][0]
+    send_data = 'HTTP/1.0 200 OK\r\n' + \
+             'Content-type: text/html\r\n\r\n' + \
+             '<p>' + \
+             'Hello Mr. %s %s.' % (f_name, l_name) + \
+             '</p>'
+    conn.send(toSend)
+
+def handle_form(conn, urlInfo):
+    forms = 'HTTP/1.0 200 OK\r\n' + \
+            'Content-type: text/html\r\n' + \
+            '\r\n' + \
+            "<form action='/submit' method='GET'>" + \
+            "First Name:<input type='text' name='firstName'>" + \
+            "Last Name:<input type='text' name='lastName'>" + \
+            "<input type='submit' value='Submit Get'>" + \
+            "</form>\r\n" + \
+            "<form action='/submit' method='POST'>" + \
+            "First Name:<input type='text' name='firstName'>" + \
+            "Last Name:<input type='text' name='lastName'>" + \
+            "<input type='submit' value='Submit Post'>" + \
+            "</form>\r\n"
+    conn.send(forms)
 
 def handle_connection_content(conn):
     conn.send('HTTP/1.0 200 OK\r\n')
