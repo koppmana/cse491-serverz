@@ -13,3 +13,7 @@
  * Server handles different path requests
  * Added more test functions
  
+2014-01-30 Allen Koppman
+
+ * Implemented basic form handling for post and get requests
+ * Added test cases to test file

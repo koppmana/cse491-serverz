@@ -96,3 +96,62 @@ def test_handle_connection_post():
     server.handle_connection_post(conn)
 
     assert conn.sent == expected_return, 'Got: %s' % (repr(conn.sent),)
+
+def test_handle_form():
+    form_conn = FakeConnection("GET /form HTTP/1.0\r\n\r\n")
+
+    form_return = 'HTTP/1.0 200 OK\r\n' + \
+            'Content-type: text/html\r\n' + \
+            '\r\n' + \
+            "<form action='/submit' method='GET'>" + \
+            "First Name:<input type='text' name='firstName'>" + \
+            "Last Name:<input type='text' name='lastName'>" + \
+            "<input type='submit' value='Submit Get'>" + \
+            "</form>\r\n" + \
+            "<form action='/submit' method='POST'>" + \
+            "First Name:<input type='text' name='firstName'>" + \
+            "Last Name:<input type='text' name='lastName'>" + \
+            "<input type='submit' value='Submit Post'>" + \
+            "</form>\r\n"
+
+    server.handle_connection(form_conn)
+
+    assert form_conn.sent == form_return, 'Got: %s' % (repr(form_conn.sent),)
+    
+
+def test_post_request():
+    post_conn = FakeConnection("POST /image HTTP/1.0\r\n\r\n")
+
+    post_return = 'HTTP/1.0 200 OK\r\n' + \
+             'Content-type: text/html\r\n\r\n' + \
+             '<h2>hello world</h2>'
+
+    server.handle_connection(post_conn)
+
+    assert post_conn.sent == post_return, 'Got: %s' % (repr(post_conn.sent),)
+
+def test_handle_get_submit():
+    submit_conn = FakeConnection("GET /submit?firstName=Allen&lastName=Koppman HTTP/1.0\r\n\r\n")
+
+    submit_return = 'HTTP/1.0 200 OK\r\n' + \
+             'Content-type: text/html\r\n\r\n' + \
+             '<p>' + \
+             'Hello Mr. Allen Kopppman.' + \
+             '</p>'
+
+    server.handle_connection(submit_conn)
+
+    assert submit_conn.sent == submit_return, 'Got: %s' % (repr(submit_conn.sent),)
+
+def test_handle_post_submit():
+    submit_conn = FakeConnection("POST /submit HTTP/1.0\r\n\r\nfirstName=Allen&lastName=Koppman")
+
+    submit_return = 'HTTP/1.0 200 OK\r\n' + \
+             'Content-type: text/html\r\n\r\n' + \
+             '<p>' + \
+             'Hello Mr. Allen Koppman.' + \
+             '</p>'
+
+    server.handle_connection(submit_conn)
+
+    assert submit_conn.sent == submit_return, 'Got: %s' % (repr(submit_conn.sent),)
