@@ -38,8 +38,9 @@ def handle_connection(conn):
         request += conn.recv(1)
 
     split_request = request.split('\r\n')[0].split(' ')
+    print split_request
 
-    req_type = split_request[0]
+    req_type = request_line1[0]
 
     try:
         url_parse = urlparse.urlparse(split_request[1])
@@ -79,13 +80,43 @@ def handle_connection(conn):
 
     conn.close()
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+def handle_connection_default(conn):
+    conn.send('HTTP/1.0 200 OK\r\n')
+    conn.send('Content-type: text/html\r\n')
+    conn.send('\r\n')
+    conn.send('<h1>Hello, world.</h1>')
+    conn.send('This is koppmana\'s Web server.<br>')
+    conn.send('<a href="/content">Content</a><br>')
+    conn.send('<a href="/file">File</a><br>')
+    conn.send('<a href="/image">Image</a><br>')
+
+def handle_submit(conn, url_info, req_info, req_type):
+    if req_type == "GET":
+        query = url_info.query
+    elif req_type == "POST":
+        query = req_info.splitlines()[-1]
+
+    data = urlparse.parse_qs(query)
+    f_name = data['firstName'][0]
+    l_name = data['lastName'][0]
+    send_data = 'HTTP/1.0 200 OK\r\n' + \
+             'Content-type: text/html\r\n\r\n' + \
+             '<p>' + \
+             'Hello Mr. %s %s.' % (f_name, l_name) + \
+             '</p>'
+    conn.send(send_data)
+=======
+=======
+>>>>>>> f854c898c2620cb5f6c42cfaacc34f20ccdc9f5f
 def handle_connection_default(conn, env):
     response = 'HTTP/1.0 200 OK\r\n' + \
             'Content-type: text/html\r\n' + \
             '\r\n' + \
             env.get_template("index.html").render()
 
-    conn.send(response)
+  conn.send(response)
 
 
 def handle_submit_get(conn, params, env):
@@ -112,7 +143,7 @@ def handle_submit_get(conn, params, env):
     conn.send(response)
 
 def handle_submit_post(conn, form, env):
-    try:
+     try:
       firstname = form['firstname'].value
     except KeyError:
       firstname = ''
@@ -122,7 +153,7 @@ def handle_submit_post(conn, form, env):
       lastname = ''
 
     vars = dict(firstname = firstname, lastname = lastname)
-    template = env.get_template("submit.html")
+    template = env.get_template("submit_result.html")
 
     response = 'HTTP/1.0 200 OK\r\n' + \
             'Content-type: text/html\r\n' + \
@@ -130,6 +161,10 @@ def handle_submit_post(conn, form, env):
             env.get_template("submit.html").render(vars)
 
     conn.send(response)
+<<<<<<< HEAD
+>>>>>>> f854c898c2620cb5f6c42cfaacc34f20ccdc9f5f
+=======
+>>>>>>> f854c898c2620cb5f6c42cfaacc34f20ccdc9f5f
 
 def handle_form(conn, urlInfo):
     forms = 'HTTP/1.0 200 OK\r\n' + \
@@ -144,7 +179,7 @@ def handle_form(conn, urlInfo):
             "First Name:<input type='text' name='firstName'>" + \
             "Last Name:<input type='text' name='lastName'>" + \
             "<input type='submit' value='Submit Post'>" + \
-            "</form>\r\n" + \
+            "</form>\r\n"
             "<form action='/submit' method='POST' enctype='multipart/form-data'>" + \
             "First Name:<input type='text' name='firstName'>" + \
             "Last Name:<input type='text' name='lastName'>" + \
