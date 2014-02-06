@@ -17,3 +17,10 @@
 
  * Implemented basic form handling for post and get requests
  * Added test cases to test file
+
+2014-02-06 Allen Koppman
+
+ * Html loaded from templates using jinja2
+ * Handles both types of post requests
+ * More tests
+ 
