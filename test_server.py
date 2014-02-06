@@ -107,9 +107,6 @@ def test_handle_submit_no_last_name():
 
 # Test POST stuff
 
-<<<<<<< HEAD
-    assert form_conn.sent == form_return, 'Got: %s' % (repr(form_conn.sent),)
-=======
 def test_handle_connection_post():
     conn = FakeConnection("POST / HTTP/1.0\r\n" + \
       "Content-length: 0\r\n\r\n")
@@ -161,7 +158,6 @@ def test_handle_empty_request():
   conn = FakeConnection("\r\n\r\n")
 
   server.handle_connection(conn)
->>>>>>> f854c898c2620cb5f6c42cfaacc34f20ccdc9f5f
 
   assert 'HTTP/1.0 404' in conn.sent and 'town' in conn.sent, \
     'Got: %s' % (repr(conn.sent),)

@@ -31,7 +31,7 @@ def handle_connection(conn):
     loader = jinja2.FileSystemLoader('./templates')
     env = jinja2.Environment(loader=loader)
 
-    request = conn.recv(1)
+  request = conn.recv(1)
 
     # We get the headers here
     while request[-4:] != '\r\n\r\n':
@@ -81,6 +81,7 @@ def handle_connection(conn):
     conn.close()
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 def handle_connection_default(conn):
     conn.send('HTTP/1.0 200 OK\r\n')
     conn.send('Content-type: text/html\r\n')
@@ -107,6 +108,8 @@ def handle_submit(conn, url_info, req_info, req_type):
              '</p>'
     conn.send(send_data)
 =======
+=======
+>>>>>>> f854c898c2620cb5f6c42cfaacc34f20ccdc9f5f
 def handle_connection_default(conn, env):
     response = 'HTTP/1.0 200 OK\r\n' + \
             'Content-type: text/html\r\n' + \
@@ -158,6 +161,9 @@ def handle_submit_post(conn, form, env):
             env.get_template("submit.html").render(vars)
 
     conn.send(response)
+<<<<<<< HEAD
+>>>>>>> f854c898c2620cb5f6c42cfaacc34f20ccdc9f5f
+=======
 >>>>>>> f854c898c2620cb5f6c42cfaacc34f20ccdc9f5f
 
 def handle_form(conn, urlInfo):
