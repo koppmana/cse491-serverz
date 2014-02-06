@@ -136,18 +136,18 @@ def handle_form(conn, urlInfo):
             'Content-type: text/html\r\n' + \
             '\r\n' + \
             "<form action='/submit' method='GET'>" + \
-            "First Name:<input type='text' name='firstName'>" + \
-            "Last Name:<input type='text' name='lastName'>" + \
+            "First Name:<input type='text' name='firstname'>" + \
+            "Last Name:<input type='text' name='lastname'>" + \
             "<input type='submit' value='Submit Get'>" + \
             "</form>\r\n" + \
             "<form action='/submit' method='POST'>" + \
-            "First Name:<input type='text' name='firstName'>" + \
-            "Last Name:<input type='text' name='lastName'>" + \
+            "First Name:<input type='text' name='firstname'>" + \
+            "Last Name:<input type='text' name='lastname'>" + \
             "<input type='submit' value='Submit Post'>" + \
             "</form>\r\n" + \
             "<form action='/submit' method='POST' enctype='multipart/form-data'>" + \
-            "First Name:<input type='text' name='firstName'>" + \
-            "Last Name:<input type='text' name='lastName'>" + \
+            "First Name:<input type='text' name='firstname'>" + \
+            "Last Name:<input type='text' name='lastname'>" + \
             "<input type='submit' value='Submit Multipart Post'>" + \
             "</form>\r\n"
     conn.send(forms)
