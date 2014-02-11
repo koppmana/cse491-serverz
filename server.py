@@ -70,12 +70,15 @@ def handle_connection(conn):
 
         form = cgi.FieldStorage(headers = headers_dict, fp = StringIO(content), \
                                 environ = environ)
-        if path == "/":
+        if path == "/": # @CTB: note, this...
             handle_connection_default(conn, env)
         elif path == "/submit":
             handle_submit_post(conn, form, env)
-        else:
+        else: # @CTB ...and this could be extracted to top level.
             invalid_path(conn, env)
+
+    # You can probably move most code to this level, and only check
+    # for a POST if the URL is the right one.  Just a thought. -- @CTB
 
     conn.close()
 
