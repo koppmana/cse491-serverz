@@ -1,2 +1,5 @@
 *.pyc
 *~
+htmlcov
+.coverage
+cse491.env
