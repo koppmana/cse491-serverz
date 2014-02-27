@@ -27,3 +27,9 @@
 2014-02-06 Allen Koppman
  
  * Made changes to incorporate wsgi app
+
+2014-02-27 Allen Koppman
+ * Added hw6 changes since I didn't do the assignment the week prior
+ * Images capabilities
+ * Broke tests, need to fix those
+ 
