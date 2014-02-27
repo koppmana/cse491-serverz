@@ -1,218 +1,93 @@
 #!/usr/bin/env python
+
+# from chief keif
+
 import random
 import socket
 import time
 import urlparse
 import cgi
-import jinja2
+
 from StringIO import StringIO
+from app import make_app
 
 def main():
-    sock = socket.socket()         # Create a socket object
-    host = socket.getfqdn() # Get local machine name
+    s = socket.socket()         # Create a socket object
+    host = socket.getfqdn()     # Get local machine name
     port = random.randint(8000, 9999)
-    sock.bind((host, port))        # Bind to the port
+    s.bind((host, port))        # Bind to the port
 
     print 'Starting server on', host, port
     print 'The Web server URL for this would be http://%s:%d/' % (host, port)
 
-    sock.listen(5)     # Now wait for client connection.
+    s.listen(5)                 # Now wait for client connection.
 
     print 'Entering infinite loop; hit CTRL-C to exit'
     while True:
         # Establish connection with client.    
-        conn, (client_host, client_port) = sock.accept()
-        
-        print 'Got connection from', client_host, client_port
-
-        handle_connection(conn)
+        c, (client_host, client_port) = s.accept()
+        print 'Got connection from', client_host, client_port, '\n'
+        handle_connection(c)
 
 def handle_connection(conn):
-    loader = jinja2.FileSystemLoader('./templates')
-    env = jinja2.Environment(loader=loader)
-
+    environ = {}
     request = conn.recv(1)
-
-    # We get the headers here
+  
+    # This will get all the headers
     while request[-4:] != '\r\n\r\n':
         request += conn.recv(1)
 
-    split_request = request.split('\r\n')[0].split(' ')
+    first_line_of_request_split = request.split('\r\n')[0].split(' ')
 
-    req_type = split_request[0]
+    # Path is the second element in the first line of the request
+    # separated by whitespace. (Between GET and HTTP/1.1). GET/POST is first.
+    http_method = first_line_of_request_split[0]
+    environ['REQUEST_METHOD'] = first_line_of_request_split[0]
 
     try:
-        url_parse = urlparse.urlparse(split_request[1])
-        path = url_parse[2]
+        parsed_url = urlparse.urlparse(first_line_of_request_split[1])
+        environ['PATH_INFO'] = parsed_url[2]
     except:
-        invalid_path(conn, env)
-        return
+        pass
 
-    if req_type == "GET":
-        if path == "/":
-            handle_connection_default(conn, env)
-        elif path == "/content":
-            handle_connection_content(conn, env)
-        elif path == "/image":
-            handle_connection_image(conn, env)
-        elif path == "/file":
-            handle_connection_file(conn, env)
-        elif path == "/form":
-            handle_form(conn, url_parse)
-        elif path == "/submit": 
-            handle_submit_get(conn, url_parse[4], env)
-        else:
-            invalid_path(conn, env)
-    elif req_type == "POST":
-        headers_dict, content = parse_post_request(conn, request)
-        environ = {}
-        environ['REQUEST_METHOD'] = 'POST'
+    def start_response(status, response_headers):
+        conn.send('HTTP/1.0 ')
+        conn.send(status)
+        conn.send('\r\n')
+        for pair in response_headers:
+            key, header = pair
+            conn.send(key + ': ' + header + '\r\n')
+        conn.send('\r\n')
 
-        form = cgi.FieldStorage(headers = headers_dict, fp = StringIO(content), \
-                                environ = environ)
-        if path == "/": # @CTB: note, this...
-            handle_connection_default(conn, env)
-        elif path == "/submit":
-            handle_submit_post(conn, form, env)
-        else: # @CTB ...and this could be extracted to top level.
-            invalid_path(conn, env)
-
-    # You can probably move most code to this level, and only check
-    # for a POST if the URL is the right one.  Just a thought. -- @CTB
-
+    if environ['REQUEST_METHOD'] == 'POST':
+        environ = parse_post_request(conn, request, environ)
+    elif environ['REQUEST_METHOD'] == 'GET':
+        environ['QUERY_STRING'] = parsed_url.query
+    wsgi_app = make_app()
+    conn.send(wsgi_app(environ, start_response))
     conn.close()
 
-def handle_connection_default(conn, env):
-    response = 'HTTP/1.0 200 OK\r\n' + \
-            'Content-type: text/html\r\n' + \
-            '\r\n' + \
-            env.get_template("index.html").render()
+def parse_post_request(conn, request, environ):
+    request_split = request.split('\r\n')
 
-    conn.send(response)
+    # Headers are separated from the content by '\r\n'
+    # which, after the split, is just ''.
 
+    # First line isn't a header, but everything else
+    # up to the empty line is. The names are separated
+    # from the values by ': '
+    for i in range(1,len(request_split) - 2):
+        header = request_split[i].split(': ', 1)
+        environ[header[0].upper()] = header[1]
 
-def handle_submit_get(conn, params, env):
-    params = urlparse.parse_qs(params)
-
-    try:
-      firstname = params['firstname'][0]
-    except KeyError:
-      firstname = ''
-      
-    try:
-      lastname = params['lastname'][0]
-    except KeyError:
-      lastname = ''
-
-    vars = dict(firstname = firstname, lastname = lastname)
-    template = env.get_template("submit.html")
-
-    response = 'HTTP/1.0 200 OK\r\n' + \
-            'Content-type: text/html\r\n' + \
-            '\r\n' + \
-            env.get_template("submit.html").render(vars)
-
-    conn.send(response)
-
-def handle_submit_post(conn, form, env):
-    try:
-      firstname = form['firstname'].value
-    except KeyError:
-      firstname = ''
-    try:
-      lastname = form['lastname'].value
-    except KeyError:
-      lastname = ''
-
-    vars = dict(firstname = firstname, lastname = lastname)
-    template = env.get_template("submit.html")
-
-    response = 'HTTP/1.0 200 OK\r\n' + \
-            'Content-type: text/html\r\n' + \
-            '\r\n' + \
-            env.get_template("submit.html").render(vars)
-
-    conn.send(response)
-
-def handle_form(conn, urlInfo):
-    forms = 'HTTP/1.0 200 OK\r\n' + \
-            'Content-type: text/html\r\n' + \
-            '\r\n' + \
-            "<form action='/submit' method='GET'>" + \
-            "First Name:<input type='text' name='firstname'>" + \
-            "Last Name:<input type='text' name='lastname'>" + \
-            "<input type='submit' value='Submit Get'>" + \
-            "</form>\r\n" + \
-            "<form action='/submit' method='POST'>" + \
-            "First Name:<input type='text' name='firstname'>" + \
-            "Last Name:<input type='text' name='lastname'>" + \
-            "<input type='submit' value='Submit Post'>" + \
-            "</form>\r\n" + \
-            "<form action='/submit' method='POST' enctype='multipart/form-data'>" + \
-            "First Name:<input type='text' name='firstname'>" + \
-            "Last Name:<input type='text' name='lastname'>" + \
-            "<input type='submit' value='Submit Multipart Post'>" + \
-            "</form>\r\n"
-    conn.send(forms)
-
-def handle_connection_content(conn, env):
-    response = 'HTTP/1.0 200 OK\r\n' + \
-            'Content-type: text/html\r\n' + \
-            '\r\n' + \
-            env.get_template("content.html").render()
-
-    conn.send(response)
-
-def handle_connection_file(conn, env):
-    response = 'HTTP/1.0 200 OK\r\n' + \
-            'Content-type: text/html\r\n' + \
-            '\r\n' + \
-            env.get_template("file.html").render()
-
-    conn.send(response)
-
-def handle_connection_image(conn, env):
-    response = 'HTTP/1.0 200 OK\r\n' + \
-            'Content-type: text/html\r\n' + \
-            '\r\n' + \
-            env.get_template("image.html").render()
-    
-    conn.send(response)
-
-def invalid_path(conn, env):
-    response = 'HTTP/1.0 404 Not Found\r\n' + \
-            'Content-type: text/html\r\n' + \
-            '\r\n' + \
-            env.get_template("invalid_path.html").render()
-
-    conn.send(response)
-
-def parse_post_request(conn, request):
-  ''' Takes in a request (as a string), parses it, and
-      returns a dictionary of header name => header value
-      returns a string built from the content of the request'''
+    content_length = int(environ['CONTENT-LENGTH'])
   
-  header_dict = dict()
+    content = ''
+    for i in range(0,content_length):
+        content += conn.recv(1)
 
-  request_split = request.split('\r\n')
-
-  # Headers are separated from the content by '\r\n'
-  # which, after the split, is just ''.
-
-  # First line isn't a header, but everything else
-  # up to the empty line is. The names are separated
-  # from the values by ': '
-  for i in range(1,len(request_split) - 2):
-    header = request_split[i].split(': ', 1)
-    header_dict[header[0].lower()] = header[1]
-
-  content_length = int(header_dict['content-length'])
-
-  content = ''
-  for i in range(0,content_length):
-    content += conn.recv(1)
-
-  return header_dict, content
+    environ['wsgi.input'] = StringIO(content)
+    return environ
 
 if __name__ == '__main__':
     main()

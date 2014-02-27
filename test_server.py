@@ -62,7 +62,7 @@ def test_handle_connection_image():
                       '\r\n' + \
                       '<h1>Fulfilling image request</h1>'
 
-    server.handle_connection_image(conn)
+    server.handle_connection(conn)
 
     assert 'HTTP/1.0 200' in conn.sent and 'image' in conn.sent, \
     'Got: %s' % (repr(conn.sent),)

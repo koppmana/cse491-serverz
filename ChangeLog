@@ -24,3 +24,6 @@
  * Handles both types of post requests
  * More tests
  
+2014-02-06 Allen Koppman
+ 
+ * Made changes to incorporate wsgi app
