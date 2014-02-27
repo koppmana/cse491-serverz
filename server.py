@@ -130,7 +130,7 @@ def main():
 
     # Bind to a (random) port
     # port = random.randint(8000, 9999)
-    port = 8088
+    port = 9998
     sock.bind((host, port))
 
     print 'Starting server on', host, port
