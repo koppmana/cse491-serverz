@@ -33,3 +33,7 @@
  * Images capabilities
  * Broke tests, need to fix those
  
+2014-03-20 Allen Koppman
+ * Added functionality to handle command line arguments upon starting the server
+ * Twill tests working
+ * Need to add extra project option
