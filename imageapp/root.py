@@ -43,3 +43,11 @@ class RootDirectory(Directory):
     def imagelist(self):
         tempVars = {"images":image.get_image_list()}
         return html.render('imagelist.html', tempVars)
+
+    @export(name='imagelist_raw')
+    def imagelist_raw(self, index):
+        print "Index:" index
+        response = quixote.get_response()
+        response.set_content_type('image/png')
+        img = image.get_image(index)
+        return img
