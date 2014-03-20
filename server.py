@@ -112,6 +112,7 @@ def handle_connection(conn, port, wsgi_app):
         conn.send(data)
 
     # Close the connection
+    result.close()
     conn.close()
 
 def main():  
@@ -146,7 +147,7 @@ def main():
         # Establish connection with client.    
         conn, (client_host, client_port) = sock.accept()
         print 'Got connection from', client_host, client_port
-        handle_connection(conn, client_port, wsgi_app)
+        handle_connection(conn, port, wsgi_app)
         
         
 if __name__ == "__main__":
