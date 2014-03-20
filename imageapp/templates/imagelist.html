@@ -3,7 +3,7 @@
 {% block content %}
 <ul>
 	{% for key, val in images.iteritems() %}
-		<li><img width=40% src='imagelist_raw?index=key'/></li>
+		<li><img width=40% src='{{ val }}'/></li>
 	{% endfor %}
 </ul>
 {% endblock %}
