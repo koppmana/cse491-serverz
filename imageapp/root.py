@@ -41,5 +41,5 @@ class RootDirectory(Directory):
 
     @export(name='imagelist')
     def imagelist(self):
-        templateVars = {"images":image.get_image_list()}
-        return html.render('imagelist.html',templateVars)
+        tempVars = {"images":image.get_image_list()}
+        return html.render('imagelist.html', tempVars)
