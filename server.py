@@ -2,27 +2,19 @@
 import random
 import socket
 import time
+import argparse
+import quixote
 from urlparse import urlparse
 from StringIO import StringIO
 from wsgiref.validate import validator
 from sys import stderr
+
 from app import make_app
+from quixote.demo import create_publisher
+import imageapp
 
 
-## Quixhote
-# import quixote
-# from quixote.demo.altdemo import create_publisher
-# p = create_publisher()
-##
-
-## Image app
-# import quixote
-# import imageapp
-# imageapp.setup()
-# p = imageapp.create_publisher()
-##
-
-def handle_connection(conn, port):
+def handle_connection(conn, port, wsgi_app):
     """Takes a socket connection, and serves a WSGI app over it.
         Connection is closed when app is served."""
     
@@ -90,26 +82,20 @@ def handle_connection(conn, port):
         while len(content) < cLen:
             content += conn.recv(1)
         
-    # Set up a StringIO to mimic stdin for the FieldStorage in the app
     env['wsgi.input'] = StringIO(content)
-    
-    # Get the application
 
-    ## My app.py
-    wsgi_app = make_app()
-    ## 
-    
-    ## Quixote alt.demo
-    # wsgi_app = quixote.get_wsgi_app()
-    ##
-
-    ## Imageapp
-    # wsgi_app = quixote.get_wsgi_app()
-    ##
-
+    if wsgi_app == "image":
+        imageapp.setup()
+        p = imageapp.create_publisher()
+        wsgi_app = quixote.get_wsgi_app()
+    elif wsgi_app == "myapp":
+        wsgi_app = make_app()
+    elif wsgi_app == "altdemo":
+        p = create_publisher()
+        wsgi_app = quixote.get_wsgi_app() 
+   
     ## VALIDATION ##
     wsgi_app = validator(wsgi_app)
-    ## VALIDATION ##
 
     result = wsgi_app(env, start_response)
 
@@ -117,10 +103,10 @@ def handle_connection(conn, port):
     for data in result:
         conn.send(data)
 
-    # Close the connection; we're done here
+    # Close the connection
     conn.close()
 
-def main():
+def main():  
     """Waits for a connection, then serves a WSGI app using handle_connection"""
     # Create a socket object
     sock = socket.socket()
@@ -128,11 +114,20 @@ def main():
     # Get local machine name (fully qualified domain name)
     host = socket.getfqdn()
 
-    # Bind to a (random) port
-    # port = random.randint(8000, 9999)
-    port = 9991
+    parser = argparse.ArgumentParser(description='Choose which app to run.')
+    parser.add_argument('-A', choices=["image", "myapp", "altdemo"],
+                        default="myapp", help='app to run')
+    parser.add_argument('-p', type=int, default=random.randint(8000,9999),
+                        help='the port number to connect on')
+
+    args = parser.parse_args()
+
+    #Connect to random port if none provided
+    port = args.p
     sock.bind((host, port))
 
+    wsgi_app = args.A
+    
     print 'Starting server on', host, port
     print 'The Web server URL for this would be http://%s:%d/' % (host, port)
 
@@ -144,7 +139,8 @@ def main():
         # Establish connection with client.    
         conn, (client_host, client_port) = sock.accept()
         print 'Got connection from', client_host, client_port
-        handle_connection(conn, client_port)
+        handle_connection(conn, client_port, wsgi_app)
+        
         
 if __name__ == "__main__":
     main()
