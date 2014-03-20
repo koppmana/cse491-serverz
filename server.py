@@ -86,14 +86,20 @@ def handle_connection(conn, port, wsgi_app):
     if wsgi_app == "image":
         from imageapp import create_publisher
         imageapp.setup()
-        p = imageapp.create_publisher()
+        try:
+            p = imageapp.create_publisher()
+        except RuntimeError:
+            pass
         wsgi_app = quixote.get_wsgi_app()
     elif wsgi_app == "myapp":
         from app import make_app
         wsgi_app = make_app()
     elif wsgi_app == "altdemo":
         from quixote.demo.altdemo import create_publisher
-        p = create_publisher()
+        try:
+            p = create_publisher()
+        except RuntimeError:
+            pass
         wsgi_app = quixote.get_wsgi_app() 
    
     ## VALIDATION ##
