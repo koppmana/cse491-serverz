@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<ul>
+	{% for i,j in images.iteritems() %}
+		<li>{{ j }} </li>
+	{% endfor %}
+</ul>
+{% endblock %}
