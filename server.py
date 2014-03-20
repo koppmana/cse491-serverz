@@ -3,14 +3,13 @@ import random
 import socket
 import time
 import argparse
-import quixote
+import jinja2
 from urlparse import urlparse
 from StringIO import StringIO
 from wsgiref.validate import validator
 from sys import stderr
 
-from app import make_app
-from quixote.demo import create_publisher
+import quixote
 import imageapp
 
 
@@ -85,12 +84,15 @@ def handle_connection(conn, port, wsgi_app):
     env['wsgi.input'] = StringIO(content)
 
     if wsgi_app == "image":
+        from imageapp import create_publisher
         imageapp.setup()
         p = imageapp.create_publisher()
         wsgi_app = quixote.get_wsgi_app()
     elif wsgi_app == "myapp":
+        from app import make_app
         wsgi_app = make_app()
     elif wsgi_app == "altdemo":
+        from quixote.demo.altdemo import create_publisher
         p = create_publisher()
         wsgi_app = quixote.get_wsgi_app() 
    
@@ -122,7 +124,6 @@ def main():
 
     args = parser.parse_args()
 
-    #Connect to random port if none provided
     port = args.p
     sock.bind((host, port))
 
