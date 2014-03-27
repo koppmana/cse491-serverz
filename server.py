@@ -102,7 +102,7 @@ def handle_connection(conn, port, wsgi_app):
             pass
         wsgi_app = quixote.get_wsgi_app()
     elif wsgi_app == "quotes":
-        wsgi_app = quotes.create_quote_app('./quotes/quotes.txt',
+        wsgi_app = quotes.create_quotes_app('./quotes/quotes.txt',
                                            './quotes/html')
         
    
