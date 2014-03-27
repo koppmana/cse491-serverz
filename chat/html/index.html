@@ -37,9 +37,13 @@ $(document).ready(function() {
 
         author = $("author", message).text();
         content = $("text", message).text();
+	date = new Date(timestamp * 1000);
 
-        $("#messagewindow").prepend("<b>" + author + "</b>:" + content 
+        $("#messagewindow").prepend(date.toLocaleTimeString() + " " + "<b>" + author + "</b>: " + content 
                                     + "<br>");
+
+
+
      });
   };
 

@@ -132,7 +132,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='Choose which app to run.')
     parser.add_argument('-A', choices=["image", "myapp", "altdemo", "quotes",
-                                       "chat"])
+                                       "chat"],
                         default="myapp", help='app to run')
     parser.add_argument('-p', type=int, default=random.randint(8000,9999),
                         help='the port number to connect on')
