@@ -37,7 +37,7 @@ class FileServer(object):
           
       fullpath = self.path + url
       fullpath = os.path.abspath(fullpath)
-      assert fullpath.startswith(self.path)
+      #assert fullpath.startswith(self.path)
       
       extension=mimetypes.guess_type(fullpath)
       extension=extension[0]
