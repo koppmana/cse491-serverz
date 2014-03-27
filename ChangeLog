@@ -36,4 +36,10 @@
 2014-03-20 Allen Koppman
  * Added functionality to handle command line arguments upon starting the server
  * Twill tests working
- * Need to add extra project option
+ * Struggle to implement imagelist
+ 
+2014-03-27 Allen Koppman
+ * Integrated chat app with timestamps
+ * Integrated quote app
+ * Need to implement project option, will do soon
+ 
