@@ -102,8 +102,8 @@ def handle_connection(conn, port, wsgi_app):
             pass
         wsgi_app = quixote.get_wsgi_app()
     elif wsgi_app == "quotes":
-	from quotes import QuotesApp
-        wsgi_app = QuotesApp('quotes.txt', './html')
+	from quotes import apps
+        wsgi_app = apps.QuotesApp('./quotes/quotes.txt', './html')
         
    
     ## VALIDATION ##

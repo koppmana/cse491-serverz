@@ -15,7 +15,7 @@ class QuotesApp(object):
    def __call__(self, environ, start_response):
       url = environ['PATH_INFO']
       print 'requested URL is:', url
-      if url == '/generate_quote':
+      if url == '/':
          quote = random.choice(self.quotes)
 
          start_response("200 OK", [('Content-type', 'text/html')])
