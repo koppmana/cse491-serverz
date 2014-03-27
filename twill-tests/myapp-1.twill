@@ -1,0 +1,28 @@
+go /
+code 200
+
+go /content
+code 200
+
+go /
+code 200
+
+go /file
+code 200
+
+go /
+code 200
+
+go /image
+code 200
+
+go /
+code 200
+
+go /form
+code 200
+formvalue 1 firstname Mike 
+formvalue 1 lastname Jones
+submit
+
+find "WHO?"

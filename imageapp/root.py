@@ -38,3 +38,8 @@ class RootDirectory(Directory):
         response.set_content_type('image/png')
         img = image.get_latest_image()
         return img
+
+    @export(name='imagelist')
+    def imagelist(self):
+        tempVars = {"images":image.get_image_list()}
+        return html.render('imagelist.html', tempVars)

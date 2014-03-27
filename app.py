@@ -49,12 +49,12 @@ def serveFile(env, **kwargs):
 
     return (response_headers, data)
 
-def File(env, **kwargs):
+def file(env, **kwargs):
     # Load a random file from the files dir, and serve it
     kwargs['path'] = '/files/'+choice(listdir('files'))
     return serveFile(env, **kwargs)
 
-def Image(env, **kwargs):
+def image(env, **kwargs):
     # Load a random image from the images dir, and serve it
     kwargs['path'] = '/images/'+choice(listdir('images'))
     return serveFile(env, **kwargs)
@@ -94,8 +94,8 @@ def app(environ, start_response):
     response = {
                 '/'        : index,      \
                 '/content' : content,    \
-                '/file'    : File,  \
-                '/image'   : Image, \
+                '/file'    : file,  \
+                '/image'   : image, \
                 '/form'    : form,       \
                 '/submit'  : submit,     \
                 '404'      : fail,       \
