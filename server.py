@@ -11,6 +11,8 @@ from sys import stderr
 
 import quixote
 import imageapp
+import quotes
+
 
 
 def handle_connection(conn, port, wsgi_app):
@@ -100,7 +102,11 @@ def handle_connection(conn, port, wsgi_app):
             p = create_publisher()
         except RuntimeError:
             pass
-        wsgi_app = quixote.get_wsgi_app() 
+        wsgi_app = quixote.get_wsgi_app()
+    elif wsgi_app == "quotes":
+        from quotes import QuotesApp
+        wsgi_app = QuotesApp('quotes.txt', './html')
+        
    
     ## VALIDATION ##
     wsgi_app = validator(wsgi_app)
@@ -124,7 +130,7 @@ def main():
     host = socket.getfqdn()
 
     parser = argparse.ArgumentParser(description='Choose which app to run.')
-    parser.add_argument('-A', choices=["image", "myapp", "altdemo"],
+    parser.add_argument('-A', choices=["image", "myapp", "altdemo", "quotes"],
                         default="myapp", help='app to run')
     parser.add_argument('-p', type=int, default=random.randint(8000,9999),
                         help='the port number to connect on')
