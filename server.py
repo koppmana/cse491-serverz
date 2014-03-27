@@ -13,8 +13,6 @@ import quixote
 import imageapp
 import quotes
 
-
-
 def handle_connection(conn, port, wsgi_app):
     """Takes a socket connection, and serves a WSGI app over it.
         Connection is closed when app is served."""
@@ -104,7 +102,7 @@ def handle_connection(conn, port, wsgi_app):
             pass
         wsgi_app = quixote.get_wsgi_app()
     elif wsgi_app == "quotes":
-        from quotes import QuotesApp
+	from quotes import QuotesApp
         wsgi_app = QuotesApp('quotes.txt', './html')
         
    
