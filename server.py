@@ -11,7 +11,8 @@ from sys import stderr
 
 import quixote
 import imageapp
-
+import quotes
+import chat
 
 def handle_connection(conn, port, wsgi_app):
     """Takes a socket connection, and serves a WSGI app over it.
@@ -100,7 +101,13 @@ def handle_connection(conn, port, wsgi_app):
             p = create_publisher()
         except RuntimeError:
             pass
-        wsgi_app = quixote.get_wsgi_app() 
+        wsgi_app = quixote.get_wsgi_app()
+    elif wsgi_app == "quotes":
+        wsgi_app = quotes.create_quotes_app('./quotes/quotes.txt',
+                                           './quotes/html')
+    elif wsgi_app == "chat":
+        wsgi_app = chat.create_chat_app('./chat/html')
+        
    
     ## VALIDATION ##
     wsgi_app = validator(wsgi_app)
@@ -124,7 +131,8 @@ def main():
     host = socket.getfqdn()
 
     parser = argparse.ArgumentParser(description='Choose which app to run.')
-    parser.add_argument('-A', choices=["image", "myapp", "altdemo"],
+    parser.add_argument('-A', choices=["image", "myapp", "altdemo", "quotes",
+                                       "chat"],
                         default="myapp", help='app to run')
     parser.add_argument('-p', type=int, default=random.randint(8000,9999),
                         help='the port number to connect on')

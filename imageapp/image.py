@@ -20,3 +20,6 @@ def get_latest_image():
 
 def get_image_list():
     return images
+
+def image_count():
+    return max(images.keys())
