@@ -2,7 +2,18 @@
 
 {% block content %}
 Here is your image:
-<p>
-<img width=40% src='image_raw?special=latest'/>
+<div id="latest_image">
+</div>
+<script type="text/javascript">
+    $.post("image_count",
+         function(count) { 
+            count = parseInt(count);
+            $("#latest_image").append("<div style='padding-top:10px'>" + 
+                "<img width='300' height='300' src='image_raw?index=" + count + "' /></div>");
+         }
+    );
+</script>
+
+
 
 {% endblock %}

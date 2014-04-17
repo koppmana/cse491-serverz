@@ -4,7 +4,6 @@ import socket
 import time
 import argparse
 import jinja2
-import MySQLdb
 from urlparse import urlparse
 from StringIO import StringIO
 from wsgiref.validate import validator
@@ -77,7 +76,10 @@ def handle_connection(conn, port, wsgi_app):
         # Set up extra env variables
         env['REQUEST_METHOD'] = 'POST'
         env['CONTENT_LENGTH'] = str(headers['content-length'])
-        env['CONTENT_TYPE'] = headers['content-type']
+        try:
+            env['CONTENT_TYPE'] = headers['content-type']
+        except:
+            pass
         # Continue receiving content up to content-length
         cLen = int(headers['content-length'])
         while len(content) < cLen:

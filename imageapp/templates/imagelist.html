@@ -2,8 +2,20 @@
 
 {% block content %}
 
-	{% for key, val in data %}
-		{{ val }}
-	{% endfor %}
+<h2>Image Gallery!</h2>
+
+<div id="imageGallery">
+</div>
+<script type="text/javascript">
+    $.post("image_count",
+         function(count) { 
+            count = parseInt(count);
+            for (var i = count - 1; i >= 0; i--) {
+                $("#imageGallery").append("<div style='padding-top:10px'>" + 
+                    "<img width='300' height='300' src='image_raw?index=" + i + "' /></div>");
+            }
+         }
+    );
+</script>
 
 {% endblock %}
