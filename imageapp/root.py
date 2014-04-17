@@ -1,4 +1,5 @@
 import quixote
+import json
 from quixote.directory import Directory, export, subdir
 
 from . import html, image
@@ -10,10 +11,14 @@ class RootDirectory(Directory):
     def index(self):
         return html.render('index.html')
 
+    @export(name='jquery')
+    def jquery(self):
+        return open('jquery-1.11.0.min.js').read()
+
     @export(name='upload')
     def upload(self):
         return html.render('upload.html')
-
+    
     @export(name='upload_receive')
     def upload_receive(self):
         request = quixote.get_request()
@@ -41,5 +46,5 @@ class RootDirectory(Directory):
 
     @export(name='imagelist')
     def imagelist(self):
-        tempVars = {"images":image.get_image_list()}
-        return html.render('imagelist.html', tempVars)
+        return html.render("imagelist.html", \
+                           data=json.dumps(image.get_images())

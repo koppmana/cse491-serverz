@@ -1,6 +1,37 @@
 # image handling API
+import sqlite3
+DB_FILE = "images.sqlite"
+
+import os
 
 images = {}
+
+def initialize():
+    load()
+
+def load():
+    global images
+    if not os.path.exists(DB_FILE):
+        print 'CREATING', DB_FILE
+        db = sqlite3.connect(DB_FILE)
+        db.execute('CREATE TABLE image_store \
+                   (i INTEGER PRIMARY KEY, image BLOB)')
+        db.commit()
+        db.close()
+
+    # connect to database
+    db = sqlite3.connect(IMAGE_DB_FILE)
+
+    # configure to retrieve bytes, not text
+    db.text_factory = bytes
+
+    # get a query handle (or "cursor")
+    c = db.cursor()
+
+    # select all of the images
+    c.execute('SELECT i, image FROM image_store')
+    for i, image in c.fetchall():
+        images[i] = image
 
 def add_image(data):
     if images:
@@ -8,7 +39,19 @@ def add_image(data):
     else:
         image_num = 0
         
+    # connect to the already existing database
+    db = sqlite3.connect(DB_FILE)
+
+    # configure to allow binary insertions
+    db.text_factory = bytes
+
+    # insert!
+    db.execute('INSERT INTO image_store (i, image) VALUES (?, ?)',
+               (image_num, data,))
+    db.commit()
+
     images[image_num] = data
+    
     return image_num
 
 def get_image(num):
@@ -18,7 +61,7 @@ def get_latest_image():
     image_num = max(images.keys())
     return images[image_num]
 
-def get_image_list():
+def get_images():
     return images
 
 def image_count():

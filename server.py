@@ -4,6 +4,7 @@ import socket
 import time
 import argparse
 import jinja2
+import MySQLdb
 from urlparse import urlparse
 from StringIO import StringIO
 from wsgiref.validate import validator

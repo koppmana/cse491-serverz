@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-<ul>
-	{% for key, val in images.iteritems() %}
-		<li><img src='image_raw'/></li>
+
+	{% for key, val in data %}
+		{{ val }}
 	{% endfor %}
-</ul>
+
 {% endblock %}
