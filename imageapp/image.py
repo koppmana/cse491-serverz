@@ -1,8 +1,10 @@
 # image handling API
 import sqlite3
-DB_FILE = "images.db"
+
 
 import os
+
+DB_FILE = "images.sqlite"
 
 images = {}
 
@@ -11,66 +13,51 @@ class Image(object):
         self.filetype = filetype
         self.data = data
 
-def initialize():
-    load()
-
-def load():
-    global images
-##    if not os.path.exists(DB_FILE):
-##        print 'CREATING', DB_FILE
-##        db = sqlite3.connect(DB_FILE)
-##        qs = "CREATE TABLE image_store" + \
-##             "(i INTEGER PRIMARY KEY, image BLOB)"
-##        db.execute(qs)
-##        db.commit()
-##        db.close()
-##        
-##    # connect to database
-##    db = sqlite3.connect(DB_FILE)
-##
-##    db.text_factory = bytes
-##
-##    c = db.cursor()
-##
-##    # select all of the images
-##    c.execute('SELECT i, image FROM image_store')
-##    for i, image in c.fetchall():
-##        images[i] = image
-
 def add_image(data, filetype):
-    if images:
-        image_num = max(images.keys()) + 1
-    else:
-        image_num = 0
+    db = sqlite3.connect(DB_FILE)
 
-    image = Image(data, filetype)
-##    # connect to the already existing database
-##    db = sqlite3.connect(DB_FILE)
-##
-##    # configure to allow binary insertions
-##    db.text_factory = bytes
-##
-##    # insert!
-##    db.execute('INSERT INTO image_store (i, image) VALUES (?, ?)',
-##               (image_num, data))
-##    db.commit()
+    db.text_factory = bytes
 
-    images[image_num] = image
-    
-    return image_num
+    # insert image into db
+    db.execute('INSERT INTO image_store (image, filetype) VALUES (?, ?)',
+               (data, filetype))
+    db.commit()
 
 def get_image(num):
-    return images[num]
+    db = sqlite3.connect(DB_FILE)
+
+    db.text_factory = bytes
+
+    c = db.cursor()
+
+    # Get image by key value
+    if num >= 0:
+        c.execute('SELECT i, filetype, image FROM image_store WHERE i=(?)', \
+                  (num,))
+    else:
+        c.execute('SELECT i, filetype, image FROM image_store ORDER BY i \
+            DESC LIMIT 1')
+
+    try:
+        i, filetype, image = c.fetchone()
+        print "got image: " + str(i)
+
+        return Image(image, filetype)
+    except:
+        pass
 
 def get_latest_image():
-    image_num = max(images.keys())
-    return images[image_num]
-
-def get_images():
-    return images
+    return get_image(-1)
 
 def image_count():
+    db = sqlite3.connect(DB_FILE)
+
+    c = db.cursor()
+
+    # insert!
+    c.execute('SELECT COUNT(*) FROM image_store')
+
     try:
-        return max(images.keys()) + 1
-    except ValueError:
+        return int(c.fetchone()[0])
+    except:
         return 0

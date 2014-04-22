@@ -43,9 +43,11 @@ class RootDirectory(Directory):
         request = quixote.get_request()
         
         try:
-            img = image.get_image(int(request.form["index"]))
-        except KeyError:
-            img = image.get_latest_image()
+            index = int(request.form["index"])
+        except ValueError:
+            index = -1
+            
+        img = image.get_image(index)
 
         imgtype = img.filetype
 
