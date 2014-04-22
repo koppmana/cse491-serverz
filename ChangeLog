@@ -43,3 +43,12 @@
  * Integrated quote app
  * Need to implement project option, will do soon
  
+2014-04-17 Allen Koppman
+ * Completed project 4 and 5
+ * Added working imagelist, link on index page
+ * Added support for TIFF and JPG filetypes
+ * Continuing work on completing previous weeks project requirements
+ 
+2014-04-22 Allen Koppman
+ * Completed project #16
+  - Added persistent data using sqlite. 
