@@ -51,10 +51,12 @@
  
 2014-04-22 Allen Koppman
  * Completed project #16
-  - Added persistent data using sqlite. 
+  - Added persistent data to image app using sqlite. 
  * Completed project #23
   - Access images via image_raw?index=x. x represents image number from the db.
  * Completed project #8
   - Commenting on images implemented
   - Comments held in sqlite db
+ * Completed project #12
+  - Added AJAX upload capabilities to image app
  
