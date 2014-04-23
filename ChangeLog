@@ -53,4 +53,8 @@
  * Completed project #16
   - Added persistent data using sqlite. 
  * Completed project #23
-  - Access images via image_raw?index=x URL. x represents image number from the db.
+  - Access images via image_raw?index=x. x represents image number from the db.
+ * Completed project #8
+  - Commenting on images implemented
+  - Comments held in sqlite db
+ 
