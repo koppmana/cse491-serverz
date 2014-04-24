@@ -53,7 +53,7 @@
  * Completed project #16
   - Added persistent data to image app using sqlite. 
  * Completed project #23
-  - Access images via image_raw?index=x. x represents image number from the db.
+  - Access images via image?index=x. x represents image number from the db.
  * Completed project #8
   - Commenting on images implemented
   - Comments held in sqlite db
@@ -61,7 +61,7 @@
   - Added AJAX upload capabilities to image app
  * Completed project #6
   - Metadata added upon image upload. Currently only name and image description
-  - Metadata displayed when image is loaded. Includes name, description, and timestamp of when the image was submitted.
+  - Metadata displayed when image is loaded via image?index= path. Includes name, description, and timestamp of when the image was submitted.
  * Completed project #7
   - Simple search for images by metadata implemented
    - Only looks to see if the input is a substring of an image name or description
