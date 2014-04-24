@@ -59,4 +59,6 @@
   - Comments held in sqlite db
  * Completed project #12
   - Added AJAX upload capabilities to image app
- 
+ * Completed project #6
+  - Metadata added upon image upload. Currently only name and image description
+  - Metadata displayed when image is loaded. Includes name, description, and timestamp of when the image was submitted.
