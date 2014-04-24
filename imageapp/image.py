@@ -155,6 +155,21 @@ def get_top_rated():
         imgKeys.append((row[0],row[1]))
 
     return imgKeys
+
+def get_most_rated():
+    db = sqlite3.connect(DB_FILE)
+
+    c = db.cursor()
+
+    # search db for images with name or desc containing the user search text
+    c.execute('SELECT i, rating_count FROM image_store ORDER BY rating_count DESC LIMIT 10')
+
+    imgKeys = []
+    
+    for row in c:
+        imgKeys.append((row[0],row[1]))
+
+    return imgKeys
         
 def update_rating(index, rating):
     db = sqlite3.connect(DB_FILE)

@@ -28,8 +28,12 @@ class RootDirectory(Directory):
         return html.render("search.html")
 
     @export(name='top')
-    def search(self):
+    def top(self):
         return html.render("top.html")
+
+    @export(name='most')
+    def most(self):
+        return html.render("most.html")
     
 ##    @export(name='create')
 ##    def create(self):
@@ -80,11 +84,37 @@ class RootDirectory(Directory):
         
         return xml
 
+    # return xml of the top 10 rated images
     @export(name="get_top_rated")
     def get_top_rated(self):
         request = quixote.get_request()
 
         imgKeys = image.get_top_rated()
+
+        images = []
+        
+        for i in imgKeys:
+            images.append("""\
+                <image>
+                 <index>%i</index>
+                 <rating>%s</rating>
+                </image>
+                """ % (i[0], i[1]))
+        
+        xml = """
+            <images>
+            %s
+            </images>
+            """ % ("".join(images))
+        
+        return xml
+
+    # return xml of the 10 most rated images
+    @export(name="get_most_rated")
+    def get_most_rated(self):
+        request = quixote.get_request()
+
+        imgKeys = image.get_most_rated()
 
         images = []
         
@@ -133,6 +163,7 @@ class RootDirectory(Directory):
     def image(self):
         return html.render('image.html')
 
+    # return an image from the db
     @export(name='image_raw')
     def image_raw(self):
         response = quixote.get_response()
@@ -165,6 +196,7 @@ class RootDirectory(Directory):
         return html.render("imagelist.html")
 
 
+    # get comment from post request, save in db
     @export(name="add_comment")
     def add_comment(self):
         response = quixote.get_response()
@@ -183,6 +215,7 @@ class RootDirectory(Directory):
         image.add_comment(index, comment)
 
 
+    # return xml of the comments for an image
     @export(name="get_comments")
     def get_comments(self):
         response = quixote.get_response()
@@ -214,6 +247,7 @@ class RootDirectory(Directory):
 
         return xml
 
+    # return xml of an images metadata
     @export(name="get_meta_data")
     def get_meta_data(self):
         response = quixote.get_response()
@@ -241,6 +275,7 @@ class RootDirectory(Directory):
 
         return xml
 
+    # update rating change of an image 
     @export(name="update_rating")
     def update_rating(self):
         response = quixote.get_response()
