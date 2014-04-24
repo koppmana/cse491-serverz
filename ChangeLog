@@ -67,3 +67,8 @@
    - Only looks to see if the input is a substring of an image name or description
   - Search located on imagelist page, redirects to search page
   - made imagelist and search page slightly prettier
+ * Completed project #27
+  - Implemented image ratings to image and image?index= pages
+  - Ratings kept in db
+  - Avg rating and number of times rated displayed
+  - Working on getting top images link working
