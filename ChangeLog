@@ -65,5 +65,5 @@
  * Completed project #7
   - Simple search for images by metadata implemented
    - Only looks to see if the input is a substring of an image name or description
-  - Search located on imagelist page
+  - Search located on imagelist page, redirects to search page
   - made imagelist and search page slightly prettier
