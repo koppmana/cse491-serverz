@@ -13,6 +13,7 @@ class Image(object):
         self.filetype = filetype
         self.data = data
 
+# add image to db
 def add_image(data, filetype, name, desc):
     db = sqlite3.connect(DB_FILE)
 
@@ -23,6 +24,7 @@ def add_image(data, filetype, name, desc):
                 VALUES (?, ?, ?, ?)', (data, filetype, name, desc))
     db.commit()
 
+# return Image object built from image info from db
 def get_image(num):
     db = sqlite3.connect(DB_FILE)
 
@@ -49,6 +51,7 @@ def get_image(num):
 def get_latest_image():
     return get_image(0)
 
+# return count of images
 def image_count():
     db = sqlite3.connect(DB_FILE)
 
@@ -60,7 +63,8 @@ def image_count():
         return int(c.fetchone()[0])
     except:
         return 0
-
+    
+# add a comment to the db
 def add_comment(i, comment):
     db = sqlite3.connect(DB_FILE)
 
@@ -80,6 +84,7 @@ def add_comment(i, comment):
                (i, comment))
     db.commit()
 
+# get comments from db
 def get_comments(i):
     db = sqlite3.connect(DB_FILE)
 
@@ -105,6 +110,7 @@ def get_comments(i):
 
     return comments
 
+# get metadata from db
 def get_meta_data(i):
     db = sqlite3.connect(DB_FILE)
 
@@ -125,6 +131,7 @@ def get_meta_data(i):
     for row in c:
         return [row[0], row[1], float(row[2]), row[3], row[4]]
 
+# return list of img indexes based off search criteria
 def image_search(qs):
     db = sqlite3.connect(DB_FILE)
 
@@ -141,6 +148,7 @@ def image_search(qs):
 
     return imgKeys
 
+# get 10 highest rated images from db
 def get_top_rated():
     db = sqlite3.connect(DB_FILE)
 
@@ -156,6 +164,7 @@ def get_top_rated():
 
     return imgKeys
 
+# get 10 images with most ratings from db
 def get_most_rated():
     db = sqlite3.connect(DB_FILE)
 
@@ -170,7 +179,9 @@ def get_most_rated():
         imgKeys.append((row[0],row[1]))
 
     return imgKeys
-        
+
+
+# update rating in db 
 def update_rating(index, rating):
     db = sqlite3.connect(DB_FILE)
     
@@ -202,7 +213,7 @@ def update_rating(index, rating):
 
     db.commit()
 
-
+# calculate new average based on user rating and numbers of ratings
 def calc_new_rating(avg, rating, count):
     diff = abs((rating - avg) / float(count))
 

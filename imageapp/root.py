@@ -34,15 +34,20 @@ class RootDirectory(Directory):
     @export(name='most')
     def most(self):
         return html.render("most.html")
-    
-##    @export(name='create')
-##    def create(self):
-##        return html.render('create_account.html')
 
-##    @export(name='home')
-##    def home(self):
-##        return html.render('home.html')
-    
+    @export(name='image')
+    def image(self):
+        return html.render('image.html')
+
+    @export(name='image_count')
+    def image_count(self):
+        return image.image_count()
+
+    @export(name='imagelist')
+    def imagelist(self):
+        return html.render("imagelist.html")
+
+    # receive file data from form, add image and metadata to db
     @export(name='upload_receive')
     def upload_receive(self):
         request = quixote.get_request()
@@ -60,6 +65,7 @@ class RootDirectory(Directory):
 
         return quixote.redirect('./')
 
+    # search for image based on user input
     @export(name="image_search")
     def image_search(self):
         request = quixote.get_request()
@@ -89,6 +95,7 @@ class RootDirectory(Directory):
     def get_top_rated(self):
         request = quixote.get_request()
 
+        # call of to db to get the indexes of top 10 images
         imgKeys = image.get_top_rated()
 
         images = []
@@ -133,35 +140,7 @@ class RootDirectory(Directory):
             """ % ("".join(images))
         
         return xml
-
-    @export(name="create_account")
-    def create_account(self):
-        request = quixote.get_request()
-
-        username = request.form["username"]
-        password = request.form['password']
-        confirmPw = request.form['confirm']
-
-        # very simple password comparison check
-        # if password == confirmPw:
-            
-        # if username didn't exist redirect to home
-        if image.create_account(username, password):
-            quixote.redirect("/home?user=" + username)
-
-##    @export(name="login")
-##    def login(self):
-##        request = quixote.get_request()
-##
-##        username = request.form["username"]
-##        password = request.form['password']
-##
-##        if image.login(username, password):
-##            quixote.redirect("/home?user=" + username)
-
-    @export(name='image')
-    def image(self):
-        return html.render('image.html')
+    
 
     # return an image from the db
     @export(name='image_raw')
@@ -186,14 +165,6 @@ class RootDirectory(Directory):
             response.set_content_type("image/png")
         
         return img.data
-
-    @export(name='image_count')
-    def image_count(self):
-        return image.image_count()
-
-    @export(name='imagelist')
-    def imagelist(self):
-        return html.render("imagelist.html")
 
 
     # get comment from post request, save in db
@@ -292,3 +263,37 @@ class RootDirectory(Directory):
             return
 
         image.update_rating(index, rating)
+
+##    @export(name='create')
+##    def create(self):
+##        return html.render('create_account.html')
+
+##    @export(name='home')
+##    def home(self):
+##        return html.render('home.html')
+
+##    @export(name="create_account")
+##    def create_account(self):
+##        request = quixote.get_request()
+##
+##        username = request.form["username"]
+##        password = request.form['password']
+##        confirmPw = request.form['confirm']
+##
+##        # very simple password comparison check
+##        # if password == confirmPw:
+##            
+##        # if username didn't exist redirect to home
+##        if image.create_account(username, password):
+##            quixote.redirect("/home?user=" + username)
+
+##    @export(name="login")
+##    def login(self):
+##        request = quixote.get_request()
+##
+##        username = request.form["username"]
+##        password = request.form['password']
+##
+##        if image.login(username, password):
+##            quixote.redirect("/home?user=" + username)
+
