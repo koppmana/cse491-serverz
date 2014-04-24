@@ -4,18 +4,47 @@
 
 <h2>Image Gallery!</h2>
 
+
+Search Images: <input type='text' name='query' value=''>
+<input type='submit' name='image_search' value='Search'><br>
+
 <div id="imageGallery">
 </div>
+
 <script type="text/javascript">
-    $.post("image_count",
+$(document).ready(function(e) {
+	$("input[name='image_search'").click(function () {
+		window.location.href = "search?query=" + $("input[name='query']").val()
+	});
+	
+	$.post("image_count",
          function(count) { 
             count = parseInt(count);
+			var j = 0;
+			var p = -1;
             for (var i = count; i >= 1; i--) {
-                $("#imageGallery").append("<div style='padding-top:10px'>" + 
-                    "<img width='300' height='300' src='image_raw?index=" + i + "' /></div>");
+				if(j%3 === 0)
+				{
+					p++;
+					image = "<div style='padding-top:10px' id='image_container" + p + "'>" + 
+                    "<span style='padding:10px 10px'><a href='/image?index=" + i + "'>" +
+                    "<img width='300' height='300' src='image_raw?index=" + i + "' /></a></span></div>";
+					
+					$("#imageGallery").append(image);
+				}
+				else
+				{
+					image = "<span style='padding:10px 10px'>" + 
+                    "<a href='/image?index=" + i + "'>" +
+                    "<img width='300' height='300' src='image_raw?index=" + i + "' /></a></span>";
+
+					$("#image_container" + p).append(image);
+				}
+                j++;
             }
          }
     );
+});
 </script>
 
 {% endblock %}

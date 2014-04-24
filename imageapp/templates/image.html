@@ -1,19 +1,126 @@
 {% extends "base.html" %}
 
 {% block content %}
-Here is your image:
-<div id="latest_image">
+<h1><span id="img_name"></span></h1>
+<div style="padding:0px 0px 20px 0px" id="desc"></div>
+<div>
+
+<div id="image_container">
 </div>
+Submitted: <span id="sub_date"></span><br>
+
+<div style='text-align:center' id='rating'>
+	<div>Rate this image</div>
+	<span class='rate_button'><a href="#">1</a></span>
+	<span class='rate_button'><a style='margin-left:30px' href="#">2</a></span>
+	<span class='rate_button'><a style='margin-left:30px' href="#">3</a></span>
+	<span class='rate_button'><a style='margin-left:30px' href="#">4</a></span>
+	<span class='rate_button'><a style='margin-left:30px' href="#">5</a></span>
+	<div id='current_rating'>Current rating: </div>
+	<div>Rated <span id='rate_count'></span> times</div>
+</div>
+<div>
+	<input type="text" id="comment" />
+	<button id="add_comment">Add Comment!</button>
+</div>
+<h2>Comments</h2>
+<div id="comment_container">
+</div>
+
+
 <script type="text/javascript">
-    $.post("image_count",
-         function(count) { 
-            count = parseInt(count);
-            $("#latest_image").append("<div style='padding-top:10px'>" + 
-                "<img width='300' height='300' src='image_raw?index=" + count + "' /></div>");
-         }
-    );
+var stripped = window.location.href.split("#")[0]
+var imgKey = stripped.split("?index=")[1]
+
+//get the image
+$("#image_container").append(get_image(imgKey))
+
+//retrieve image from db
+//if the index is valid (integer) load that image, else load latest
+function get_image(imgKey) 
+{
+	if($.isNumeric(imgKey)) 
+	{
+		imgLoc = "<img width=50% src='image_raw?index=" + imgKey + "' />"
+	}	
+	else 
+	{
+		imgLoc = "<img width=50% src='image_raw?special=latest' />"
+	}
+	return imgLoc;
+}
+
+$("#add_comment").click(function(){
+	if($("#comment").val() === '')
+	{
+		alert("Please add text to comment");
+	}
+	else
+	{
+		$.post("add_comment", 
+			{
+				index : imgKey,
+				comment : $("#comment").val(),
+			})
+		.success(function(){
+			window.location.reload()
+		})
+	}
+});
+
+//when a number is clicked, make post call to update db
+$(".rate_button a").click(function(){
+		$.ajax({
+			type:'POST',
+			url:"update_rating", 
+			data:{index : imgKey,
+				  rating : $(this).text(),
+				 },
+			}).success(function(){
+				window.location.reload()
+			})
+	});
+
+$(document).ready(function(e) {
+	//Get image meta data
+	$.ajax({
+		type:'POST',
+		url:'get_meta_data',
+		data:{index : imgKey},
+		dataType:"text",
+		success: function(xml) {
+			var xml = $.parseXML(xml);
+			var name = $(xml).find('name').text();
+			var desc = $(xml).find('desc').text();
+			var rating = $(xml).find('rating').text();
+			var count = $(xml).find('count').text();
+			var timestamp = $(xml).find('timestamp').text();
+			
+			$("#img_name").append(name)
+			$("#desc").append(desc)
+			$("#sub_date").append(timestamp)
+			$("#current_rating").append(rating)
+			$("#rate_count").append(count)
+		}
+	});
+	
+	//get comments from db with post call
+	$.ajax({
+		type:'POST',
+		url:'get_comments',
+		data: {index : imgKey},
+		dataType:'text',
+		success: (function(xml) { 
+			//build the comments from the xml
+			var xml = $.parseXML(xml);
+			$(xml).find('comment').each( function(id) {
+				comment = $(this).find('text').text();
+				timestamp = $(this).find('timestamp').text();
+				$("#comment_container").append("<div style='margin-bottom:10px'>" + timestamp + "<div class='comment'>" + comment + "</div>")
+			})
+		})	
+	});
+});
+
 </script>
-
-
-
 {% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+Upload an image (png, jpg, tif supported):
+
+<form id='form' enctype='multipart/form-data' action='upload_receive' method='POST'>
+Filename: <input type='file' name='file'><p>
+Image Name: <input type='text' name='img_name'><p>
+Description: <input type='text' style='width:100px' name='desc'><p>
+<input type='submit'>
+</form>
+
+<script type='text/javascript'>
+$(document).ready(function(e) {
+
+  $("#form").on('submit', (function(e) {
+    e.preventDefault();
+    var formData = new FormData(this);
+
+    $.ajax({
+      type:'POST',
+      url:$(this).attr('action'),
+      data:formData,
+      cache:false,
+      contentType:false,
+      processData:false,
+      success:function(data) {
+		alert("Successful image upload!");
+		window.location = "./";
+      },
+      error:function(data) {
+        alert("Image failed upload! \nTry Again.");
+      }
+    });
+  }));
+});
+</script>
+
+{% endblock %}

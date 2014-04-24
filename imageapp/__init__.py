@@ -27,9 +27,17 @@ def create_db():
      print 'creating database'
      db = sqlite3.connect('images.sqlite')
      db.execute('CREATE TABLE image_store (i INTEGER PRIMARY KEY, filetype \
-          VARCHAR(255), image BLOB)');
-##    db.execute('CREATE TABLE image_comments (i INTEGER PRIMARY KEY, imageId INTEGER, \
-##     comment TEXT, FOREIGN KEY (imageId) REFERENCES image_store(i))');
+          VARCHAR(255), name VARCHAR(50), desc VARCHAR(255), avg_rating FLOAT DEFAULT 5, \
+                rating_count INTEGER DEFAULT 0, image BLOB, timestamp \
+          DATETIME DEFAULT CURRENT_TIMESTAMP)');
+     
+     db.execute('CREATE TABLE comments (i INTEGER PRIMARY KEY, imgKey INTEGER, \
+          comment VARCHAR(255), timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, \
+          FOREIGN KEY (imgKey) REFERENCES image_store(i))');
+
+##     db.execute('CREATE TABLE accounts (i INTEGER PRIMARY KEY, username \
+##          VARCHAR(255), password VARCHAR(255))');
+     
      db.commit()
      db.close()
      

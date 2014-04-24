@@ -18,6 +18,22 @@ class RootDirectory(Directory):
     @export(name='upload')
     def upload(self):
         return html.render('upload.html')
+
+    @export(name='upload2')
+    def upload2(self):
+        return html.render('upload2.html')
+
+    @export(name='search')
+    def search(self):
+        return html.render("search.html")
+
+##    @export(name='create')
+##    def create(self):
+##        return html.render('create_account.html')
+
+##    @export(name='home')
+##    def home(self):
+##        return html.render('home.html')
     
     @export(name='upload_receive')
     def upload_receive(self):
@@ -25,13 +41,65 @@ class RootDirectory(Directory):
         print request.form.keys()
 
         the_file = request.form['file']
+        img_name = request.form['img_name']
+        img_desc = request.form['desc']
         print dir(the_file)
         print 'received file with name:', the_file.base_filename
         data = the_file.read(the_file.get_size())
 
-        image.add_image(data, the_file.base_filename.split('.')[-1])
+        image.add_image(data, the_file.base_filename.split('.')[-1], img_name, \
+                        img_desc)
 
         return quixote.redirect('./')
+
+    @export(name="image_search")
+    def image_search(self):
+        request = quixote.get_request()
+
+        imgKeys = image.image_search(request.form["query"])
+
+        images = []
+        
+        for index, name in imgKeys.items():
+            images.append("""\
+                <image>
+                 <index>%i</index>
+                 <name>%s</name>
+                </image>
+                """ % (index, name))
+        
+        xml = """
+            <images>
+            %s
+            </images>
+            """ % ("".join(images))
+        
+        return xml
+
+    @export(name="create_account")
+    def create_account(self):
+        request = quixote.get_request()
+
+        username = request.form["username"]
+        password = request.form['password']
+        confirmPw = request.form['confirm']
+
+        # very simple password comparison check
+        # if password == confirmPw:
+            
+        # if username didn't exist redirect to home
+        if image.create_account(username, password):
+            quixote.redirect("/home?user=" + username)
+
+##    @export(name="login")
+##    def login(self):
+##        request = quixote.get_request()
+##
+##        username = request.form["username"]
+##        password = request.form['password']
+##
+##        if image.login(username, password):
+##            quixote.redirect("/home?user=" + username)
 
     @export(name='image')
     def image(self):
@@ -43,9 +111,9 @@ class RootDirectory(Directory):
         request = quixote.get_request()
         
         try:
-            index = int(request.form["index"])
-        except ValueError:
-            index = -1
+            index = int(str(request.form["index"]).split('#')[0])
+        except:
+            index = 0
             
         img = image.get_image(index)
 
@@ -67,3 +135,97 @@ class RootDirectory(Directory):
     @export(name='imagelist')
     def imagelist(self):
         return html.render("imagelist.html")
+
+
+    @export(name="add_comment")
+    def add_comment(self):
+        response = quixote.get_response()
+        request = quixote.get_request()
+
+        try:
+            index = int(request.form["index"])
+        except:
+            index = 0
+
+        try:
+            comment = request.form["comment"]
+        except:
+            return
+
+        image.add_comment(index, comment)
+
+
+    @export(name="get_comments")
+    def get_comments(self):
+        response = quixote.get_response()
+        request = quixote.get_request()
+
+        try:
+            index = int(request.form['index'])
+        except:
+            index = 0
+
+        all_comments = []
+
+        comments = image.get_comments(index)
+
+        #build the xml to pass to page
+        for comment, timestamp in comments:
+            all_comments.append("""\
+                <comment>
+                 <text>%s</text>
+                 <timestamp>%s</timestamp>
+                </comment>
+                """ % (comment, timestamp))
+
+        xml = """
+            <comments>
+            %s
+            </comments>
+            """ % ("".join(all_comments))
+
+        return xml
+
+    @export(name="get_meta_data")
+    def get_meta_data(self):
+        response = quixote.get_response()
+        request = quixote.get_request()
+
+        try:
+            index = int(request.form['index'])
+        except:
+            index = 0
+
+        meta_data = image.get_meta_data(index)
+
+        #build the xml to pass to page
+
+        xml = """
+            <metadata>
+            <name>%s</name>
+            <desc>%s</desc>
+            <rating>%.2f</rating>
+            <count>%i</count>
+            <timestamp>%s</timestamp>
+            </metadata>
+            """ % (meta_data[0], meta_data[1], meta_data[2], meta_data[3], \
+                   meta_data[4])
+
+        return xml
+
+    @export(name="update_rating")
+    def update_rating(self):
+        response = quixote.get_response()
+        request = quixote.get_request()
+
+        try:
+            index = int(str(request.form["index"]).split('#')[0])
+        except:
+            index = 0
+        
+        try:
+            rating = int(request.form["rating"])
+        except:
+            return
+
+        image.update_rating(index, rating)

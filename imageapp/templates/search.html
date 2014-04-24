@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Results for "<span id="query"></span>":</h2>
+<div id="images"></div>
+
+
+<script type="text/javascript">
+var search = window.location.href.split("?")[1].split("=")[1];
+
+$("#query").append(search);
+
+$.ajax({
+	type:'POST',
+	url:'image_search',
+	data:{ query : search },
+	dataType:'text',
+	success: function(xml) {
+		var xml = $.parseXML(xml);
+		var j = 0;
+		var p = -1;
+		
+		$(xml).find('image').each( function() {
+			var index = $(this).find('index').text();
+			// group images into sets of 3
+			if(j%3 === 0)
+			{
+				p++;
+				image = "<div style='padding-top:10px' id='image_container" + p + "'>" +			
+				"<span style='padding:10px 10px'>" + 
+				"<a href='/image?index=" + index + "'>" +
+				"<img width='300' height='300' src='image_raw?index=" + index + "' /></a></span></div>";
+			
+				$("#images").append(image);
+			}
+			else
+			{
+				image = "<span style='padding:10px 10px'>" + 
+				"<a href='/image?index=" + index + "'>" +
+				"<img width='300' height='300' src='image_raw?index=" + index + "' /></a></span>";
+				$("#image_container" + p).append(image);
+			}
+			j++;
+		});
+	}	
+});
+
+</script>
+
+{% endblock %}

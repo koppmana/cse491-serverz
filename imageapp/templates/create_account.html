@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form id='form' enctype='application/x-www-form-urlencoded' action='create_account' method='POST'>
+Username: <input type='text' name='username'><p>
+Password: <input type='password' name='password'><p>
+Confirm Password: <input type='password' name='confirm'><p>
+<input type='submit' value="Create">
+
+<script type='text/javascript'>
+/*$(document).ready(function(e) {
+
+  $("#form").on('submit', (function(e) {
+    e.preventDefault();
+    var formData = new FormData(this);
+
+    $.ajax({
+      type:'POST',
+      url:$(this).attr('action'),
+      data:formData,
+      cache:false,
+      contentType:false,
+      processData:false,
+      success:function(data) {
+		alert("Successful image upload!");
+		window.location = "./";
+      },
+      error:function(data) {
+        alert("Image failed upload! \nTry Again.");
+      }
+    });
+  }));
+});*/
+</script>
+
+{% endblock %}
