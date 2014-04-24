@@ -27,6 +27,10 @@ class RootDirectory(Directory):
     def search(self):
         return html.render("search.html")
 
+    @export(name='top')
+    def search(self):
+        return html.render("top.html")
+    
 ##    @export(name='create')
 ##    def create(self):
 ##        return html.render('create_account.html')
@@ -67,6 +71,30 @@ class RootDirectory(Directory):
                  <name>%s</name>
                 </image>
                 """ % (index, name))
+        
+        xml = """
+            <images>
+            %s
+            </images>
+            """ % ("".join(images))
+        
+        return xml
+
+    @export(name="get_top_rated")
+    def get_top_rated(self):
+        request = quixote.get_request()
+
+        imgKeys = image.get_top_rated()
+
+        images = []
+        
+        for i in imgKeys:
+            images.append("""\
+                <image>
+                 <index>%i</index>
+                 <rating>%s</rating>
+                </image>
+                """ % (i[0], i[1]))
         
         xml = """
             <images>
