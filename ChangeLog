@@ -43,3 +43,32 @@
  * Integrated quote app
  * Need to implement project option, will do soon
  
+2014-04-17 Allen Koppman
+ * Completed project 4 and 5
+ * Added working imagelist, link on index page
+ * Added support for TIFF and JPG filetypes
+ * Continuing work on completing previous weeks project requirements
+ 
+2014-04-22 Allen Koppman
+ * Completed project #16
+  - Added persistent data to image app using sqlite. 
+ * Completed project #23
+  - Access images via image?index=x. x represents image number from the db.
+ * Completed project #8
+  - Commenting on images implemented
+  - Comments held in sqlite db
+ * Completed project #12
+  - Added AJAX upload capabilities to image app
+ * Completed project #6
+  - Metadata added upon image upload. Currently only name and image description
+  - Metadata displayed when image is loaded via image?index= path. Includes name, description, and timestamp of when the image was submitted.
+ * Completed project #7
+  - Simple search for images by metadata implemented
+   - Only looks to see if the input is a substring of an image name or description
+  - Search located on imagelist page, redirects to search page
+  - made imagelist and search page slightly prettier
+ * Completed project #27
+  - Implemented image ratings to image and image?index= pages
+  - Ratings kept in db
+  - Avg rating and number of times rated displayed
+  - Working on getting top images link working
