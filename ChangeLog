@@ -49,7 +49,7 @@
  * Added support for TIFF and JPG filetypes
  * Continuing work on completing previous weeks project requirements
  
-2014-04-22 Allen Koppman
+2014-04-(22-24) Allen Koppman
  * Completed project #16
   - Added persistent data to image app using sqlite. 
  * Completed project #23
@@ -72,3 +72,5 @@
   - Ratings kept in db
   - Avg rating and number of times rated displayed
   - Working on getting top images link working
+   - Got a top 10 rated page working
+  - Going to work on most rated page
